@@ -1936,21 +1936,30 @@ function printRules(state) {
 }
 
 function removeDuplicateRules(state) {
-	var record = [];
+	var record = {}; //var record = [];
 	var newrules=[];
 	var lastgroupnumber=-1;
 	for (var i=0;i<state.rules.length;i++) {
 		var r = state.rules[i];
 		var groupnumber = r.groupNumber;
-		if (groupnumber!==lastgroupnumber) {
-			record=[];
-		}
+		
+		// use object as hashmap
 		var r_string=printRule(r);
-		if (record.indexOf(r_string)===-1) {
+		if ( (!(r_string in record) || record[r_string] != groupnumber)){
+			record[r_string] = groupnumber;
 			newrules.push(r);
-			record.push(r_string);
 		}
-		lastgroupnumber=groupnumber;
+		
+		// 
+		// if (groupnumber!==lastgroupnumber) {
+			// record=[];
+		// }
+		// var r_string=printRule(r);
+		// if (record.indexOf(r_string)===-1) {
+			// newrules.push(r);
+			// record.push(r_string);
+		// }
+		// lastgroupnumber=groupnumber;
 	}
 	state.rules=newrules;
 }
