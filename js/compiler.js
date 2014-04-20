@@ -1945,7 +1945,7 @@ function removeDuplicateRules(state) {
 		
 		// use object as hashmap
 		var r_string=printRule(r);
-		if ( (!(r_string in record) || record[r_string] != groupnumber)){
+		if ( (!(record.hasOwnProperty(r_string)) || record[r_string] != groupnumber)){
 			record[r_string] = groupnumber;
 			newrules.push(r);
 		}
