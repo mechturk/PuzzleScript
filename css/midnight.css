@@ -65,10 +65,6 @@ span.cm-SOUND {
 }
 .cm-s-midnight span.cm-SOUNDVERB {color: #AE81FF;}
 
-.systemMessage {
-	color:white;
-}
-
 .cm-s-midnight div.CodeMirror-selected {background: #314D67 !important;}
 .cm-s-midnight .CodeMirror-gutters {background: #0F192A; border-right: 1px solid;}
 .cm-s-midnight .CodeMirror-linenumber {color: #D0D0D0;}

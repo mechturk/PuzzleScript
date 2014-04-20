@@ -829,31 +829,34 @@ function rulesToArray(state) {
 		rewriteUpLeftRules(rules2[i]);
 	}
 
+	//add a dedupe step here.
+	var rules3 = dedupeSymetric(rules2);
+	
 	//replace aggregates with what they mean
-	for (var i = 0; i < rules2.length; i++) {
-		atomizeAggregates(state, rules2[i]);
+	for (var i = 0; i < rules3.length; i++) {
+		atomizeAggregates(state, rules3[i]);
 	}
 
 	//replace synonyms with what they mean
-	for (var i = 0; i < rules2.length; i++) {
-		rephraseSynonyms(state, rules2[i]);
-	}
-
-	var rules3 = [];
-	//expand property rules
-	for (var i = 0; i < rules2.length; i++) {
-		var rule = rules2[i];
-		rules3 = rules3.concat(concretizeMovingRule(state, rule,rule.lineNumber));
+	for (var i = 0; i < rules3.length; i++) {
+		rephraseSynonyms(state, rules3[i]);
 	}
 
 	var rules4 = [];
-	for (var i=0;i<rules3.length;i++) {
-		var rule=rules3[i];
-		rules4 = rules4.concat(concretizePropertyRule(state, rule,rule.lineNumber));
+	//expand property rules
+	for (var i = 0; i < rules3.length; i++) {
+		var rule = rules3[i];
+		rules4 = rules4.concat(concretizeMovingRule(state, rule,rule.lineNumber));
+	}
+
+	var rules5 = [];
+	for (var i=0;i<rules4.length;i++) {
+		var rule=rules4[i];
+		rules5 = rules5.concat(concretizePropertyRule(state, rule,rule.lineNumber));
 
 	}
 
-	state.rules = rules4;
+	state.rules = rules5;
 }
 
 function containsEllipsis(rule) {
@@ -865,6 +868,23 @@ function containsEllipsis(rule) {
 	}
 	return false;
 }
+
+function dedupeSymetric(rules) {
+	var rules2 = [];
+	if (rules){
+		rules2 = [rules[0]];
+		var lastrule = printRule(rules[0]);
+		for (var i = 0; i < rules.length-1; i++) {
+			var newrule = printRule(rules[i+1]);
+			if (lastrule != newrule){
+				rules2 = rules2.concat(rules[i+1]);
+				lastrule = newrule;
+			}
+		}
+	}
+	return rules2;
+}
+
 function rewriteUpLeftRules(rule) {
 	if (containsEllipsis(rule)) {
 		return;
@@ -885,6 +905,7 @@ function rewriteUpLeftRules(rule) {
 		}
 	}
 }
+
 
 function getPropertiesFromCell(state,cell ) {
 	var result = [];
@@ -1948,6 +1969,9 @@ function removeDuplicateRules(state) {
 		if ( (!(r_string in record) || record[r_string] != groupnumber)){
 			record[r_string] = groupnumber;
 			newrules.push(r);
+		} else {
+			consoleWarning("Duplicate in rule group " + groupnumber + ": " + r_string);
+			console.log("Duplicate in rule group " + groupnumber + ": " + r_string);
 		}
 		
 		// 
@@ -1962,6 +1986,7 @@ function removeDuplicateRules(state) {
 		// lastgroupnumber=groupnumber;
 	}
 	state.rules=newrules;
+	record = null;
 }
 function generateLoopPoints(state) {
 	var loopPoint={};

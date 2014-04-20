@@ -69,6 +69,12 @@ function consoleError(text) {
         var errorString = '<span class="errorText">' + text + '</span>';
         consolePrint(errorString,true);
 }
+
+function consoleWarning(text) {
+	var warningString = '<span class="warningText">' + text + '</span>';
+	consolePrint(warningString,true);
+}
+
 function clearConsole() {
 	var code = document.getElementById('consoletextarea');
 	code.innerHTML = '';
